@@ -1,4 +1,4 @@
-from . import game_func
+from . import deck
 class Player:
     def __init__(self):
         self.deck = []
@@ -24,4 +24,4 @@ class Player:
 
     @staticmethod
     def calculate_score(cards):
-        return game_func.summa_cards(cards)
+        return deck.summa_cards(cards)

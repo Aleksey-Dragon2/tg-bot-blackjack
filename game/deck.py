@@ -44,7 +44,7 @@ def summa_cards(mylist):
         card=card.split()
         if card[1]=="Валет" or card[1]=="Дама" or card[1]=="Король":
             score+=10
-        elif card[1]=="Туз":
+        elif card[1]=="Туз": # переделать механику подсчета очков
             if score+11>21:
                 score+=1
             else:
@@ -52,3 +52,13 @@ def summa_cards(mylist):
         else: 
             score+=int(card[1])
     return int(score)
+
+def calculate_result(player):
+    game_info = f"Карты дилера: {player.dealer_cards}\nСумма дилера: {player.dealer_score}\nВаши карты: {player.user_cards}\nСумма карт: {player.user_score}"
+    if player.user_score > player.dealer_score and player.user_score < 22 or player.dealer_score > 21 and player.user_score < 22:
+        return f"Win,\n{game_info}"
+    elif player.user_score < player.dealer_score and player.dealer_score < 22 or player.user_score > 21 and player.dealer_score < 22:
+        return f"lose,\n{game_info}"
+    else:
+        return f'ничья,\n{game_info}'
+
