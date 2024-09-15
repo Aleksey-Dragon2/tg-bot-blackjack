@@ -3,7 +3,8 @@ import config.language as lang
 def start_markup():
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton(lang.start_game)
-    markup.row(btn1)
+    btn2=types.KeyboardButton(lang.markup_rules)
+    markup.row(btn1,btn2)
     return markup
 
 def game_markup():
@@ -16,5 +17,6 @@ def game_markup():
 def restart_markup():
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton(lang.restart)
-    markup.row(btn1)
+    btn2 = types.KeyboardButton(lang.main)
+    markup.row(btn1,btn2)
     return markup
