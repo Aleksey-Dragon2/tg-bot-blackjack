@@ -10,11 +10,9 @@ players=dict()
 
 def start(message):
     bot.send_message(message.chat.id, lang.first_message, reply_markup=start_markup())
-    bot.register_next_step_handler(message, game_start)
 
 def game_start(message):
-    if message.text.lower() == lang.start_game.lower() or message.text.lower() == lang.restart.lower():
-        player=initialization_player(message.chat.id)
+        player=initialization_player(message.from_user.id)
         check_game_status(message,player)
 
 def initialization_player(chat_id):
@@ -29,23 +27,48 @@ def initialization_player(chat_id):
     
     return player
 
-def game_process(message):
-    player=players.get(message.chat.id)
-    if not player and message.text.lower() !=lang.restart.lower():
-        bot.send_message(message.chat.id,messages.GAME_NOT_REGISTER)
-        
+def register_handlers(message):
+    player=players.get(message.from_user.id)
     if message.text.lower()==lang.get_card.lower():
-            player.add_user_card(deck.get_card(player.deck))
-            check_game_status(message,player)
+        user_move(message,player)
+
+    elif message.text.lower() == lang.start_game.lower() or message.text.lower() == lang.restart.lower():
+         game_start(message)
 
     elif message.text.lower()==lang.stop.lower():
-        while player.dealer_score < 17 and player.user_score < 22 and player.user_score>player.dealer_score:
-            player.add_dealer_card(deck.get_card(player.deck))
-        finalize_game(message, player)
+        dealer_move(message,player)
 
     elif message.text.lower()==lang.restart.lower():
         game_start(message)
 
+    elif message.text.lower()==lang.markup_rules.lower():
+        send_game_rules(message)
+
+    elif message.text.lower()==lang.main.lower():
+        start(message)
+    
+    else: #not player and message.text.lower() !=lang.restart.lower():
+        check_register_game(message,player)
+
+
+
+def user_move(message,player):
+    player.add_user_card(deck.get_card(player.deck))
+    check_game_status(message,player)
+
+def send_game_rules(message):
+    bot.send_message(message.chat.id,lang.game_rules)
+
+
+def check_register_game(message,player):
+    bot.send_message(message.chat.id,messages.GAME_NOT_REGISTER)
+
+
+def dealer_move(message, player):
+    while player.dealer_score < 17 and player.user_score < 22 and player.user_score>player.dealer_score:
+        player.add_dealer_card(deck.get_card(player.deck))
+    finalize_game(message, player)
+    
 
 def send_game_status(message,player):
         game_info = (f"Карты дилера: {player.dealer_cards[0]}, 🂠\n"
