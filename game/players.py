@@ -9,11 +9,11 @@ class Player:
 
     def add_user_card(self, card):
         self.user_cards.append(card)
-        self.user_score = self.calculate_score(self.user_cards)
+        self.user_score = self.calculate_score(self.user_cards, self.user_score)
 
     def add_dealer_card(self, card):
         self.dealer_cards.append(card)
-        self.dealer_score = self.calculate_score(self.dealer_cards)
+        self.dealer_score = self.calculate_score(self.dealer_cards,self.dealer_score)
 
     def reset(self, deck):
         self.deck = deck
@@ -23,5 +23,5 @@ class Player:
         self.dealer_score = 0
 
     @staticmethod
-    def calculate_score(cards):
-        return deck.summa_cards(cards)
+    def calculate_score(cards, score):
+        return deck.summa_cards(cards, score)

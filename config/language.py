@@ -1,0 +1,11 @@
+# start_game='Start game'
+# restart='Restart'
+# get_card='Get card'
+# stop='Stop'
+# first_message='Start the game?'
+
+start_game='Начать игру'
+restart='Сыграть еще раз'
+get_card='Взять карту'
+stop='Стоп'
+first_message='Начнем игру?'

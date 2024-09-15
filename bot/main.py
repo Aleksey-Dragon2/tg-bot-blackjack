@@ -1,7 +1,7 @@
 import telebot
-from handlers import *
-import settings
-from common import bot
+from bot.handlers import *
+import config.settings
+from bot.common import bot
 
 # bot = telebot.TeleBot(settings.TOKEN)
 
