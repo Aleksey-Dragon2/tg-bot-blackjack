@@ -1,20 +1,20 @@
 from telebot import types
-
+import config.language as lang
 def start_markup():
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    btn1 = types.KeyboardButton('Start game')
+    btn1 = types.KeyboardButton(lang.start_game)
     markup.row(btn1)
     return markup
 
 def game_markup():
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    btn1=types.KeyboardButton('Взять карту')
-    btn2=types.KeyboardButton('Стоп')
+    btn1=types.KeyboardButton(lang.get_card)
+    btn2=types.KeyboardButton(lang.stop)
     markup.row(btn1,btn2)
     return markup
 
 def restart_markup():
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    btn1 = types.KeyboardButton('Restart')
+    btn1 = types.KeyboardButton(lang.restart)
     markup.row(btn1)
     return markup

@@ -38,14 +38,14 @@ def get_card(deck_cards):
     return card
 
 
-def summa_cards(mylist):
+def summa_cards(mylist,user_score):
     score=0
     for card in mylist:
         card=card.split()
         if card[1]=="Валет" or card[1]=="Дама" or card[1]=="Король":
             score+=10
         elif card[1]=="Туз": # переделать механику подсчета очков
-            if score+11>21:
+            if user_score+11>21:
                 score+=1
             else:
                 score+=11
