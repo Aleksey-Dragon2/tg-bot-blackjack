@@ -4,7 +4,9 @@ def start_markup():
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton(lang.start_game)
     btn2=types.KeyboardButton(lang.markup_rules)
-    markup.row(btn1,btn2)
+    btn3=types.KeyboardButton(lang.stats)
+    markup.row(btn1)
+    markup.row(btn3,btn2)
     return markup
 
 def game_markup():

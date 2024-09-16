@@ -5,6 +5,7 @@ from bot.markup import start_markup,game_markup, restart_markup
 import game.deck as deck
 from bot.common import bot
 import config.language as lang
+import bot.database as db
 
 players=dict()
 
@@ -29,11 +30,16 @@ def register_handlers(message):
     elif message.text.lower()==lang.main.lower():
         start(message)
     
+    elif message.text.lower()==lang.stats.lower():
+        send_stats(message)
+    
     else: #not player and message.text.lower() !=lang.restart.lower():
         check_register_game(message,player)
 
 
 def start(message):
+    db.create_table()
+    db.add_user(message)
     bot.send_message(message.chat.id, lang.first_message, reply_markup=start_markup(), parse_mode='HTML')
 
 def game_start(message):
@@ -53,11 +59,10 @@ def initialization_player(chat_id):
     return player
 
 
-
-
 def user_move(message,player):
     player.add_user_card(deck.get_card(player.deck))
     check_game_status(message,player)
+
 
 def send_game_rules(message):
     bot.send_message(message.chat.id,lang.game_rules)
@@ -86,6 +91,12 @@ def check_game_status(message,player):
 
 
 def finalize_game(message,player):
-    result=deck.calculate_result(player)
+    user_id=message.from_user.id
+    result=deck.calculate_result(player,user_id)
     bot.send_message(message.chat.id, result, reply_markup=restart_markup())
     players.clear()
+
+
+def send_stats(message):
+    user_stats=lang.get_user_stats(message.from_user.id)
+    bot.send_message(message.chat.id,user_stats)

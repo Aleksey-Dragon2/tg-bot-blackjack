@@ -1,5 +1,5 @@
 import random
-
+import bot.database as db
 def get_deck():
     deck_cards=[]
     for i in range(2,11):
@@ -53,12 +53,16 @@ def summa_cards(mylist,user_score):
             score+=int(card[1])
     return int(score)
 
-def calculate_result(player):
+def calculate_result(player, user_id):
     game_info = f"Карты дилера: {player.dealer_cards}\nСумма дилера: {player.dealer_score}\nВаши карты: {player.user_cards}\nСумма карт: {player.user_score}"
+
     if player.user_score > player.dealer_score and player.user_score < 22 or player.dealer_score > 21 and player.user_score < 22:
+        db.add_win(user_id)
         return f"Win,\n{game_info}"
     elif player.user_score < player.dealer_score and player.dealer_score < 22 or player.user_score > 21 and player.dealer_score < 22:
+        db.add_lose(user_id)
         return f"lose,\n{game_info}"
     else:
+        db.add_game(user_id)
         return f'ничья,\n{game_info}'
 
