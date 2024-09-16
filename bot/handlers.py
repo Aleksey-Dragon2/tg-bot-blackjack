@@ -8,24 +8,6 @@ import config.language as lang
 
 players=dict()
 
-def start(message):
-    bot.send_message(message.chat.id, lang.first_message, reply_markup=start_markup())
-
-def game_start(message):
-        player=initialization_player(message.from_user.id)
-        check_game_status(message,player)
-
-def initialization_player(chat_id):
-    players[chat_id]=Player()
-    players[chat_id].reset(deck.get_deck())
-    player=players[chat_id]
-
-    player.add_user_card(deck.get_card(player.deck))
-    player.add_dealer_card(deck.get_card(player.deck))
-    player.add_user_card(deck.get_card(player.deck))
-    player.add_dealer_card(deck.get_card(player.deck))
-    
-    return player
 
 def register_handlers(message):
     player=players.get(message.from_user.id)
@@ -51,6 +33,27 @@ def register_handlers(message):
         check_register_game(message,player)
 
 
+def start(message):
+    bot.send_message(message.chat.id, lang.first_message, reply_markup=start_markup(), parse_mode='HTML')
+
+def game_start(message):
+        player=initialization_player(message.from_user.id)
+        check_game_status(message,player)
+
+def initialization_player(chat_id):
+    players[chat_id]=Player()
+    players[chat_id].reset(deck.get_deck())
+    player=players[chat_id]
+
+    player.add_user_card(deck.get_card(player.deck))
+    player.add_dealer_card(deck.get_card(player.deck))
+    player.add_user_card(deck.get_card(player.deck))
+    player.add_dealer_card(deck.get_card(player.deck))
+    
+    return player
+
+
+
 
 def user_move(message,player):
     player.add_user_card(deck.get_card(player.deck))
@@ -71,10 +74,8 @@ def dealer_move(message, player):
     
 
 def send_game_status(message,player):
-        game_info = (f"Карты дилера: {player.dealer_cards[0]}, 🂠\n"
-                     f"Ваши карты: {player.user_cards}\n"
-                     f"Сумма карт: {player.user_score}")
-        bot.send_message(message.chat.id,game_info,reply_markup=game_markup())
+    game_info=lang.game_info(player)    
+    bot.send_message(message.chat.id,game_info,reply_markup=game_markup(), parse_mode='HTML')
 
 
 def check_game_status(message,player):
