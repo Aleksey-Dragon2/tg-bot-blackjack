@@ -1,6 +1,8 @@
 import sqlite3
+import re
 
-def create_table():
+
+def create_user_table():
     connection = sqlite3.connect('users.db')
     cursor = connection.cursor()
 
@@ -17,12 +19,58 @@ def create_table():
     cursor.close()
     connection.close()
 
+def create_support_table():
+    connection = sqlite3.connect('support.db')
+    cursor = connection.cursor()
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS support (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT,
+            name TEXT NOT NULL,
+            text TEXT
+        )
+    ''')
+
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+create_support_table()
+
+
+# Функция добавления сообщения в базу данных
+def add_support_message(user_id, username, name, text):
+    connection = sqlite3.connect('support.db')
+    cursor = connection.cursor()
+
+    cursor.execute('''
+        INSERT INTO support (id, username, name, text)
+        VALUES (?, ?, ?, ?)
+    ''', (user_id, username, name, text))
+
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+def check_support_message():
+    connection = sqlite3.connect('support.db')
+    cursor = connection.cursor()
+
+    cursor.execute('''SELECT * FROM support''')
+    supports=cursor.fetchall()
+
+    connection.commit()
+    cursor.close()
+    connection.close()
+    return supports
+
 def add_user(message):
     connection = sqlite3.connect('users.db')
     cursor = connection.cursor()
 
     user_id = message.from_user.id
-    username = message.from_user.username
+    username =message.from_user.username
     name = message.from_user.first_name
 
     cursor.execute("SELECT id FROM users WHERE id = ?", (user_id,))
@@ -35,6 +83,19 @@ def add_user(message):
 
     cursor.close()
     connection.close()
+
+
+def delete_user(user_id):
+    conn = sqlite3.connect('users.db') 
+    cursor = conn.cursor()
+
+
+    cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
+
+    conn.commit()
+
+
+    conn.close()
 
 
 def get_users():
@@ -52,6 +113,7 @@ def get_users():
 
     return users
 
+
 def add_win(user_id): ## message.from_user.id
     connection = sqlite3.connect('users.db')
     cursor = connection.cursor()
@@ -62,6 +124,7 @@ def add_win(user_id): ## message.from_user.id
     cursor.close()
     connection.close()
 
+
 def add_lose(user_id): ## message.from_user.id
     connection = sqlite3.connect('users.db')
     cursor = connection.cursor()
@@ -71,6 +134,7 @@ def add_lose(user_id): ## message.from_user.id
     connection.commit()
     cursor.close()
     connection.close()
+
 
 def add_game(user_id): ## message.from_user.id
     connection = sqlite3.connect('users.db')
@@ -83,12 +147,19 @@ def add_game(user_id): ## message.from_user.id
     connection.close()
 
 
+def get_user_by_id(user_id):
+    conn=sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, username, name, wins, losses, games FROM users WHERE id = ?", (user_id,))
+    return cursor.fetchone()
+
+
 def get_user_stats(user_id):
     connection = sqlite3.connect('users.db')
     cursor = connection.cursor()
 
 
-    cursor.execute("SELECT name, wins, losses, games FROM users WHERE id = ?", (user_id,))
+    cursor.execute("SELECT id, name, wins, losses, games FROM users WHERE id = ?", (user_id,))
     
     stats = cursor.fetchone()
 
@@ -96,8 +167,9 @@ def get_user_stats(user_id):
     connection.close()
 
     if stats is not None:
-        name, wins, losses, games = stats
+        id, name, wins, losses, games = stats
         return {
+            "id":id,
             "name": name,
             "wins": wins,
             "losses": losses,
@@ -105,3 +177,13 @@ def get_user_stats(user_id):
         }
     else:
         return None
+    
+
+def clear_user_stats(user_id):
+    connection = sqlite3.connect('users.db')
+    cursor = connection.cursor()
+    cursor.execute('''UPDATE users 
+                      SET wins = 0, losses = 0, games = 0 
+                      WHERE id = ?''', (user_id,))
+    connection.commit()
+    connection.close()
