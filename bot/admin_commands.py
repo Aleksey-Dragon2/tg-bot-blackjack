@@ -23,8 +23,16 @@ def check_all_supports(message):
     if supports:
         support_list=''
         for support in supports:
-            user_id, username, name, text = support
-            support_list+=f"ID: {user_id}, Username: {username}, Name: {name}, Text: {text}\n"
-        bot.send_message(message.chat.id, f"Список сообщений:\n{support_list}")
+            id, time, user_id, username, name, text = support
+            support_list+=f"ID: {id}, Time:{time}, User_id: {user_id}, Username: {username}, Name: {name}, Text: {text}\n"
+        bot.send_message(message.chat.id, f"Список сообщений:\n{support_list}",reply_markup=markup.admin_support_markup())
     else:
         bot.send_message(message.chat.id,"Нет сообщений")
+
+
+
+@bot.callback_query_handler(func=lambda callback:True)
+def callback_message(callback):
+    if callback.data=='admin_reset_support':
+        db.clear_support_message()
+        bot.edit_message_text("Успешно!",callback.message.chat.id,callback.message.message_id)

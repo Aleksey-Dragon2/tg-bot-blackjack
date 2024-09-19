@@ -1,5 +1,4 @@
 import sqlite3
-import re
 
 
 def create_user_table():
@@ -26,6 +25,8 @@ def create_support_table():
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS support (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            user_id INTEGER,
             username TEXT,
             name TEXT NOT NULL,
             text TEXT
@@ -36,8 +37,6 @@ def create_support_table():
     cursor.close()
     connection.close()
 
-create_support_table()
-
 
 # Функция добавления сообщения в базу данных
 def add_support_message(user_id, username, name, text):
@@ -45,7 +44,7 @@ def add_support_message(user_id, username, name, text):
     cursor = connection.cursor()
 
     cursor.execute('''
-        INSERT INTO support (id, username, name, text)
+        INSERT INTO support (user_id, username, name, text)
         VALUES (?, ?, ?, ?)
     ''', (user_id, username, name, text))
 
@@ -57,7 +56,15 @@ def check_support_message():
     connection = sqlite3.connect('support.db')
     cursor = connection.cursor()
 
-    cursor.execute('''SELECT * FROM support''')
+    cursor.execute('''
+                SELECT id, 
+                DATETIME(time, '+3 hours') AS time, 
+                user_id, 
+                username, 
+                name, 
+                text 
+                FROM support;
+                ''')
     supports=cursor.fetchall()
 
     connection.commit()
@@ -187,3 +194,29 @@ def clear_user_stats(user_id):
                       WHERE id = ?''', (user_id,))
     connection.commit()
     connection.close()
+
+
+def get_users_ids():
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id FROM users")
+    rows = cursor.fetchall()
+
+    id_list = [row[0] for row in rows]
+
+
+    conn.close()
+
+    return id_list
+
+
+def clear_support_message():
+    conn = sqlite3.connect('support.db')
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM support")
+
+    conn.commit()
+    cursor.close()
+    conn.close()

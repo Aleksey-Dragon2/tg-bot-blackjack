@@ -8,8 +8,6 @@ from config.settings import SUPERUSERS
 import bot.admin_commands as admin
 
 players=dict()
-user_states = {}
-
 
 
 
@@ -44,7 +42,7 @@ def register_handlers(message):
     elif message.text.lower()==lang.all_users.lower() and message.from_user.id in SUPERUSERS:
         admin.check_stats(message)
 
-    elif message.text.lower()==lang.support.lower():
+    elif message.text.lower()==lang.support_menu.lower():
         support_menu(message)
 
     elif message.text.lower()==lang.send_support_message.lower():
@@ -53,11 +51,14 @@ def register_handlers(message):
     elif message.text.lower()=='delete' and message.from_user.id in SUPERUSERS:
         db.delete_user('')
 
-    elif message.text.lower()=='support' and message.from_user.id in SUPERUSERS:
+    elif message.text.lower()==lang.admin_support.lower() and message.from_user.id in SUPERUSERS:
         admin.check_all_supports(message)
     
     elif message.text.lower()==lang.support_back.lower():
         start(message)
+    
+    elif message.text.lower()==lang.send_message_all.lower():
+        get_message_to_send(message)
 
     else: #not player and message.text.lower() !=lang.restart.lower():
         check_register_game(message,player)
@@ -65,8 +66,16 @@ def register_handlers(message):
 
 def start(message):
     db.create_user_table()
+    db.create_support_table()
     db.add_user(message)
     bot.send_message(message.chat.id, lang.FIRST_MESSAGE, reply_markup=start_markup(), parse_mode='HTML')
+    # bot.send_message(message.chat.id, lang.FIRST_MESSAGE, reply_markup=test_markuo(), parse_mode='HTML')
+
+# @bot.callback_query_handler(func=lambda callback:True)
+# def callback_message(callback):
+#     if callback.data=='start game':
+#         bot.edit_message_text("Edit text",callback.message.chat.id,callback.message.message_id)
+
 
 def game_start(message):
         player=initialization_player(message.from_user.id)
@@ -138,3 +147,21 @@ def add_support_message(message):
     username =message.from_user.username
     name = message.from_user.first_name
     db.add_support_message(user_id,username,name,message.text)
+    bot.send_message(message.chat.id,"Ваше сообщение передано!")
+    start(message)
+
+def get_message_to_send(message):
+    bot.send_message(message.chat.id,"Отправьте ваше сообщение")
+    bot.register_next_step_handler(message, send_message_to_all_user)
+
+def send_message_to_all_user(message):
+    if message.from_user.id in SUPERUSERS:
+
+        users=db.get_users_ids()
+        for user_id in users:
+            bot.send_message(user_id, message.text)
+
+
+
+    # bot.send_message(1147113777,message.text)
+    # bot.send_message(1070684527, message.text)

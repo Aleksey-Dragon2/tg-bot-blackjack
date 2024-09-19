@@ -7,7 +7,7 @@ def start_markup():
     btn1 = types.KeyboardButton(lang.start_game)
     btn2=types.KeyboardButton(lang.markup_rules)
     btn3=types.KeyboardButton(lang.stats)
-    btn4=types.KeyboardButton(lang.support)
+    btn4=types.KeyboardButton(lang.support_menu)
     markup.row(btn1,btn3)
     markup.row(btn2,btn4)
     return markup
@@ -37,5 +37,14 @@ def support_markup():
 def superuser_markup():
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton(lang.all_users)
+    btn2= types.KeyboardButton(lang.admin_support)
+    btn3=types.KeyboardButton(lang.send_message_all)
+    markup.row(btn1,btn2)
+    markup.row(btn3)
+    return markup
+
+def admin_support_markup():
+    markup=types.InlineKeyboardMarkup()
+    btn1=types.InlineKeyboardButton(lang.admin_support_reset,callback_data='admin_reset_support')
     markup.row(btn1)
     return markup
