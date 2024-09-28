@@ -38,7 +38,6 @@ def create_support_table():
     connection.close()
 
 
-# Функция добавления сообщения в базу данных
 def add_support_message(user_id, username, name, text):
     connection = sqlite3.connect('support.db')
     cursor = connection.cursor()
@@ -120,6 +119,20 @@ def get_users():
 
     return users
 
+def get_all_users_ids():
+    connection = sqlite3.connect('users.db')
+    cursor = connection.cursor()
+
+
+    cursor.execute("SELECT id FROM users")
+    
+
+    users = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return [user[0] for user in users]
 
 def add_win(user_id): ## message.from_user.id
     connection = sqlite3.connect('users.db')
