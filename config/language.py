@@ -1,4 +1,4 @@
-import bot.database as db
+from database.users import get_users, get_user_stats
 from aiogram.fsm.context import FSMContext
 
 ##     \ buttons+game logic /    ##
@@ -17,21 +17,26 @@ from aiogram.fsm.context import FSMContext
 ##     \ Кнопки+игровая логика /    ##
 
 START_GAME='Начать игру🎮'
-RESTART='Сыграть еще раз🔁'
-GET_CARD=('Взять карту🃏', 'Взять карту')
-STOP=('Стоп🚫', 'Стоп')
-RULES=('Правила🎟', 'Правила')
+
 MAIN=('Главная📄', 'Главная')
+RULES=('Правила🎟', 'Правила')
 STATS=('Статистика📊', 'Статистика')
 SUPPORT=('Поддержка❓', 'Поддержка')
-SUPPORT_BACK=('Назад', 'Отмена')
-SEND_SUPPORT_MESSAGE=('Отправить сообщение', 'сообщение')
-CONFIRM_SUPPORT_MESSAGE=('Да, все верно', 'Да')
-DENY_SUPPORT_MESSAGE=('Нет, неверно', 'Нет')
+
+GET_CARD=('Взять карту🃏', 'Взять карту')
+STOP=('Стоп🚫', 'Стоп')
+RESTART='Сыграть еще раз🔁'
+
+SEND_SUPPORT_MESSAGE=('Отправить сообщение💬', 'сообщение')
+SUPPORT_BACK=('Назад↩️', 'Назад')
+USER_SUPPORT_MESSAGES=('Мои сообщения📩', 'Мои сообщения')
+
+CONFIRM_SUPPORT_MESSAGE=('Да, все верно👍', 'Да')
+DENY_SUPPORT_MESSAGE=('Нет, неверно👎', 'Нет')
 ##     \ Сообщения пользователю /    ##
 
 GAME_INVALID_MOVE="Пожалуйста, выберите 'Взять карту' или 'Стоп' для продолжения игры."
-COMMAND_NOT_FOUND="Команда не распознана, возвращаю вас на главную"
+COMMAND_NOT_FOUND="Команда не распознана🤷‍♂️, возвращаю вас на главную"
 
 HELP_SUPPORT='Для отправки вашей жалобы или предложения по улучшению нажмите "Отправить сообщение".\n'
 SUPPORT_MESSAGE='Введите ваше сообщение'
@@ -46,16 +51,6 @@ FIRST_MESSAGE=('Привет!\n'
             'Ознакомьтесь с правилами или сразу начинайте игру!🃏'
             )
 
-def SUPPORT_MESSAGE_CONFIRMATION(text):
-    return f'Ваше сообщение: "{text}", все верно?'
-
-def SUPPORT_MESSAGE_SENT(text):
-    return f'Сообщение "{text}" отправлено'
-
-def SUPPORT_MESSAGE_DENIED(text):
-    return f'Сообщение "{text}" отклонено'
-
-
 RULES_TEXT =(   "🃏🎲 Правила игры в Блэкджек:\n\n"
                 '1.🎯 Цель игры — набрать 21 очко или ближе к этому,  не превышая 21.\n'
                 '2.🃏 Карты на руках: Игрок и дилер получают по 2 карты. Игрок видит обе свои карты, дилер — только одну из своих.\n'
@@ -66,8 +61,17 @@ RULES_TEXT =(   "🃏🎲 Правила игры в Блэкджек:\n\n"
                 '7.🏆 Победа: Побеждает тот, у кого сумма очков ближе к 21, но не больше.\n'
                 )
 
+def SUPPORT_MESSAGE_CONFIRMATION(text):
+    return f'Ваше сообщение: "{text}", все верно?'
+
+def SUPPORT_MESSAGE_SENT(text):
+    return f'Сообщение "{text}" отправлено'
+
+def SUPPORT_MESSAGE_DENIED(text):
+    return f'Сообщение "{text}" отклонено'
+
 def GET_USER_STATS(user_id):
-    stats=db.get_user_stats(user_id)
+    stats=get_user_stats(user_id)
     if stats is not None:
         user_stats=(f"<b>{stats['name']}, ваша статистика:</b>\n\n"
                     f"Побед🏅: {stats['wins']}\n"
@@ -78,6 +82,18 @@ def GET_USER_STATS(user_id):
         user_stats=f"Пока нет статистики"
     return user_stats
 
+def SEND_USER_SUPPORT_MESSAGES(supports):
+    if supports is None:
+        return "У вас нет сообщений :("
+    else:
+        name=supports[0][2]
+        support_list=''
+        for support in supports:
+            id, time, name, text, status = support
+            support_list+=f"ID: {id}, Время:{time}, Текст: {text}, Статус: {status}\n"
+
+        return f"{name}, ваши сообщения:\n\n{support_list}"
+    
 async def GAME_INFO(player, state: FSMContext):
     data = await state.get_data()
     game_info = (   f"<b>Ход игрока.</b>\n\n"
@@ -99,27 +115,46 @@ def GAME_RESULT(user_cards, dealer_cards, user_score, dealer_score):
 ##     \ Кнопки+логика администратора /    ##
 SUPERUSER=('admin', 'админ', '/admin')
 ALL_USERS='Все пользователи'
-ADMIN_SUPPORT='Список предложений'
-ADMIN_SUPPORT_RESET='Очистить предложения'
-SEND_MESSAGE_ALL='Сообщить всем'
-CONFIRM_SEND_MESSAGE_ALL='Подтвердить'
-DENY_SEND_MESSAGE_ALL='Отменить'
+
+ADMIN_SUPPORT_LIST='Список предложений'
+ADMIN_SUPPORT_RELEVANT_LIST=('Актуальные🔍', 'Актуальные')
+ADMIN_SUPPORT_ARCHIVE_LIST=('Архив🗄', 'Архив')
+
+SEND_MESSAGE_ALL=('Сообщить всем👥', 'Сообщить всем')
+CONFIRM_SEND_MESSAGE_ALL=('Подтвердить👍', 'Подтвердить')
+DENY_SEND_MESSAGE_ALL=('Отменить👎', 'Отменить')
+
+ADMIN_SUPPORT_MENU_CONFIRM=('Спасибо👍', 'Спасибо')
+ADMIN_SUPPORT_MENU_DENY=('Отклонить👎', 'Отклонить')
+ADMIN_SUPPORT_MENU_BACK=('Назад', 'Отмена')
 
 ##     \ Сообщения администратору /    ##
-ADMNIN_PANEL="Добро пожаловать в админ панель."
-def check_all_supports():
-    supports=db.check_support_message()
+ADMIN_PANEL="Добро пожаловать в админ панель."
+
+ADMIN_CHOISE_SUPPORT_LIST='Выберите список сообщений'
+ADMIN_MESSAGE_PROCESSED='Сообщение обработано'
+
+
+ADMIN_SEND_ALL_MESSAGE='Введите сообщение, которое хотите отправить всем пользователям:'
+
+def check_all_supports(supports):
     if supports:
         support_list=''
         for support in supports:
-            id, time, user_id, username, name, text = support
-            support_list+=f"ID: {id}, Time:{time}, User_id: {user_id}, Username: {username}, Name: {name}, Text: {text}\n"
+            id, time, user_id, username, name, text, status = support
+            support_list+=f"ID: {id}, Time:{time}, User_id: {user_id}, Username: {username}, Name: {name}, Text: {text}, Status: {status}\n"
         return f"Список предложений:\n{support_list}"
     else:
         return "Нет предложений"
 
+def ADMIN_MENU_SUPPORT(support_data):
+    support_id, time, user_id, username, name, text, status = support_data[0]
+    text=(f"ID: {support_id}, Time: {time}, Username: {username}, Name: {name}, Status: {status}\n\n"
+          f"Text: {text}")
+    return text
+
 def check_all_users():
-    users=db.get_users()
+    users=get_users()
     if users:
         user_list=''
         for user in users:

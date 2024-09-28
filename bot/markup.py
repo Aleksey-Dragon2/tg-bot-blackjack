@@ -35,6 +35,7 @@ SUPPORT_MARKUP = ReplyKeyboardMarkup(
     resize_keyboard=True,
     keyboard=[
         [KeyboardButton(text=lang.SEND_SUPPORT_MESSAGE[0]), KeyboardButton(text=lang.SUPPORT_BACK[0])],
+        [KeyboardButton(text=lang.USER_SUPPORT_MESSAGES[0])],
     ],
 )
 
@@ -48,22 +49,34 @@ CONFIRM_SUPPORT_MARKUP = InlineKeyboardMarkup(
 SUPERUSER_MARKUP = ReplyKeyboardMarkup(
     resize_keyboard=True,
     keyboard=[
-        [KeyboardButton(text=lang.ALL_USERS), KeyboardButton(text=lang.ADMIN_SUPPORT)],
-        [KeyboardButton(text=lang.SEND_MESSAGE_ALL)],
+        [KeyboardButton(text=lang.ALL_USERS), KeyboardButton(text=lang.ADMIN_SUPPORT_LIST)],
+        [KeyboardButton(text=lang.SEND_MESSAGE_ALL[0])],
     ],
 )
 
-ADMIN_SUPPORT_MARKUP = InlineKeyboardMarkup(
-    inline_keyboard=[
-        [InlineKeyboardButton(text=lang.ADMIN_SUPPORT_RESET, callback_data="admin_reset_support")],
+ADMIN_SUPPORT_LIST_MARKUP = ReplyKeyboardMarkup(
+    resize_keyboard=True,
+    keyboard=[
+        [KeyboardButton(text=lang.ADMIN_SUPPORT_RELEVANT_LIST[0]), KeyboardButton(text=lang.ADMIN_SUPPORT_ARCHIVE_LIST[0])],
+        [KeyboardButton(text=lang.ADMIN_SUPPORT_MENU_BACK[0])],
     ],
 )
 
-def ADMIN_SUPPORT_MESSAGE_MARKUP(ids):
+def ADMIN_SUPPORT_MESSAGES_MARKUPS(ids):
     action='help'
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text=str(id), callback_data=f"{action}_{str(id)}") for id in ids[i:i+3]] for i in range(0, len(ids), 3)
     ])
+    return keyboard
+
+def ADMIN_SUPPORT_MENU_MARKUP(support_id):
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=lang.ADMIN_SUPPORT_MENU_CONFIRM[0], callback_data=f"admin_support_confirm_{support_id}"),
+        InlineKeyboardButton(text=lang.ADMIN_SUPPORT_MENU_DENY[0], callback_data=f"admin_support_deny_{support_id}")],
+
+        [InlineKeyboardButton(text=lang.ADMIN_SUPPORT_MENU_BACK[0], callback_data=f"admin_support_back_{support_id}")],
+    ],
+)
     return keyboard
 
 ADMIN_SEND_MESSAGE_ALL_MARKUP = InlineKeyboardMarkup(

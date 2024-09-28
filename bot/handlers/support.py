@@ -3,10 +3,10 @@ from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from config.language import SUPPORT, HELP_SUPPORT, SEND_SUPPORT_MESSAGE, SUPPORT_MESSAGE, SUPPORT_MESSAGE_SENT, SUPPORT_MESSAGE_DENIED, SUPPORT_MESSAGE_CONFIRMATION
-from config.language import SUPPORT_INVALID_MOVE, SUPPORT_BACK
+from config.language import SUPPORT_INVALID_MOVE, SUPPORT_BACK, USER_SUPPORT_MESSAGES, SEND_USER_SUPPORT_MESSAGES
 from bot.markup import SUPPORT_MARKUP, CONFIRM_SUPPORT_MARKUP
 from bot.FSM import GameState
-from bot.database import add_support_message
+from database.supports import add_support_message, get_all_support_message_user
 from bot.handlers.start import start
 import asyncio
 
@@ -31,6 +31,17 @@ async def process_support_choice(message: Message, state: FSMContext):
 async def process_support_back(message: Message, state: FSMContext):
     await state.clear()
     await start(message, state)
+
+@router.message(GameState.CHOOSING_SUPPORT, lambda message: message.text.casefold() in [cmd.casefold() for cmd in USER_SUPPORT_MESSAGES])
+async def process_user_support_messages(message: Message, state: FSMContext):
+    if message.from_user is None:
+        return
+    else:
+        id=message.from_user.id
+    await message.answer(
+        SEND_USER_SUPPORT_MESSAGES(get_all_support_message_user(id)),
+        parse_mode="HTML",
+    )
 
 @router.message(GameState.SUPPORT_MESSAGE)
 async def process_support_message(message: Message, state: FSMContext):
