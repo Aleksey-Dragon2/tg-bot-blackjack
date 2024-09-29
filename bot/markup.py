@@ -39,12 +39,23 @@ SUPPORT_MARKUP = ReplyKeyboardMarkup(
     ],
 )
 
+STATS_MARKUP = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text=lang.STATS[0], callback_data="stats")]
+    ],
+)
+
+RATING_MARKUP = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text=lang.RATING[0], callback_data="rating")]
+    ])
+
 CONFIRM_SUPPORT_MARKUP = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text=lang.CONFIRM_SUPPORT_MESSAGE[0], callback_data="confirm_support"),
          InlineKeyboardButton(text=lang.DENY_SUPPORT_MESSAGE[0], callback_data="deny_support")],
     ],
 )
+
 
 SUPERUSER_MARKUP = ReplyKeyboardMarkup(
     resize_keyboard=True,
@@ -85,3 +96,12 @@ ADMIN_SEND_MESSAGE_ALL_MARKUP = InlineKeyboardMarkup(
         InlineKeyboardButton(text=lang.DENY_SEND_MESSAGE_ALL[0], callback_data="deny_send_message_all")],
     ],
 )
+# learn later
+def PAGINATION_MARKUP(page, total_pages):
+    buttons = []
+    if page > 0:
+        buttons.append(InlineKeyboardButton(text="Назад", callback_data=f"page_{page - 1}"))
+    if page < total_pages - 1:
+        buttons.append(InlineKeyboardButton(text="Вперед", callback_data=f"page_{page + 1}"))
+    
+    return InlineKeyboardMarkup(inline_keyboard=[buttons])

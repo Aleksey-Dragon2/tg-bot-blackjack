@@ -3,7 +3,7 @@ from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from config.language import GET_USER_STATS, STATS
-from bot.markup import START_MARKUP
+from bot.markup import RATING_MARKUP
 router = Router()
 
 @router.message(Command("stats"))
@@ -11,6 +11,6 @@ router = Router()
 async def stats(message: Message, state: FSMContext):
     await message.answer(
         GET_USER_STATS(message.from_user.id),
-        reply_markup=START_MARKUP,
+        reply_markup=RATING_MARKUP,
         parse_mode="HTML",
     )
