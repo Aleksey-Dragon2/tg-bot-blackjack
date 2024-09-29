@@ -2,7 +2,7 @@ from aiogram import Router
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from config.language import ALL_USERS, check_all_users
-from bot.markup import SUPERUSER_MARKUP
+from bot.markup import ADMIN_MARKUP
 from bot.env import SUPERUSERS
 router = Router()
 
@@ -10,6 +10,6 @@ router = Router()
 async def start(message: Message, state: FSMContext):
     await message.answer(
         check_all_users(),
-        reply_markup=SUPERUSER_MARKUP,
+        reply_markup=ADMIN_MARKUP,
         parse_mode="HTML",
     )
