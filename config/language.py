@@ -1,4 +1,4 @@
-from database.users import get_users, get_user_stats
+from database.usersDB import get_users, get_user_stats, get_users_rating_by_id
 from aiogram.fsm.context import FSMContext
 
 ##     \ buttons+game logic /    ##
@@ -11,8 +11,6 @@ from aiogram.fsm.context import FSMContext
 
 ###     \ Messages to the user /    ##
 # FIRST_MESSAGE='Start the game?'
-
-
 
 ##     \ Кнопки+игровая логика /    ##
 
@@ -33,6 +31,9 @@ USER_SUPPORT_MESSAGES=('Мои сообщения📩', 'Мои сообщени
 
 CONFIRM_SUPPORT_MESSAGE=('Да, все верно👍', 'Да')
 DENY_SUPPORT_MESSAGE=('Нет, неверно👎', 'Нет')
+
+RATING=('Топ игроков🏆', 'Топ игроков')
+
 ##     \ Сообщения пользователю /    ##
 
 GAME_INVALID_MOVE="Пожалуйста, выберите 'Взять карту' или 'Стоп' для продолжения игры."
@@ -61,6 +62,17 @@ RULES_TEXT =(   "🃏🎲 Правила игры в Блэкджек:\n\n"
                 '7.🏆 Победа: Побеждает тот, у кого сумма очков ближе к 21, но не больше.\n'
                 )
 
+def RATING_TEXT(users):
+    emojis = ["🥇", "🥈", "🥉"]
+    if users:
+        rating_text = "🏆 Топ игроков:\n\n"
+        for index, user in enumerate(users):
+            name, wins = user
+            rating_text += f"\t{emojis[index]} {name} - {wins} побед\n"
+        return rating_text
+    else:
+        return "Пока нет статистики"
+
 def SUPPORT_MESSAGE_CONFIRMATION(text):
     return f'Ваше сообщение: "{text}", все верно?'
 
@@ -72,28 +84,35 @@ def SUPPORT_MESSAGE_DENIED(text):
 
 def GET_USER_STATS(user_id):
     stats=get_user_stats(user_id)
+    rating=get_users_rating_by_id(user_id)
     if stats is not None:
         user_stats=(f"<b>{stats['name']}, ваша статистика:</b>\n\n"
                     f"Побед🏅: {stats['wins']}\n"
                     f"Поражений🪦: {stats['losses']}\n"
-                    f"Всего игр🕹️: {stats['games']}"
+                    f"Всего игр🕹️: {stats['games']}\n\n"
+                    f"Место в топе: {rating}"
                     )
     else:
         user_stats=f"Пока нет статистики"
     return user_stats
 
-def SEND_USER_SUPPORT_MESSAGES(supports):
-    if supports is None:
+def SEND_USER_SUPPORT_MESSAGES(supports, page=0, page_size=5):
+    if not supports:
         return "У вас нет сообщений :("
-    else:
-        name=supports[0][2]
-        support_list=''
-        for support in supports:
-            id, time, name, text, status = support
-            support_list+=f"ID: {id}, Время:{time}, Текст: {text}, Статус: {status}\n"
-
-        return f"{name}, ваши сообщения:\n\n{support_list}"
     
+    start = page * page_size
+    end = start + page_size
+    paginated_supports = supports[start:end]
+    
+    name = supports[0][2] #get name
+    support_list = ''
+    for support in paginated_supports:
+        id, time, name, text, status = support
+        support_list += f"ID: {id}, Время:{time}, Текст: {text}, Статус: {status}\n"
+    
+    total_pages = (len(supports) + page_size - 1) // page_size
+    return f"{name}, ваши сообщения (страница {page + 1}/{total_pages}):\n\n{support_list}"
+
 async def GAME_INFO(player, state: FSMContext):
     data = await state.get_data()
     game_info = (   f"<b>Ход игрока.</b>\n\n"
