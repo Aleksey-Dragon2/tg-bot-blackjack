@@ -6,8 +6,8 @@ from config.language import ADMIN_SUPPORT_LIST, ADMIN_SUPPORT_RELEVANT_LIST, ADM
 from config.language import ADMIN_PANEL, ADMIN_CHOISE_SUPPORT_LIST, ADMIN_MESSAGE_PROCESSED
 from bot.markup import ADMIN_SUPPORT_MESSAGES_MARKUPS, ADMIN_SUPPORT_MENU_MARKUP, ADMIN_SUPPORT_LIST_MARKUP, SUPERUSER_MARKUP
 
-from database.supports import get_all_support_ids, check_support_messages, check_support_message_by_id
-from database.archive_support import move_support_to_archive, check_archive_support_messages
+from database.supportsDB import get_all_support_ids, check_support_messages, check_support_message_by_id
+from database.archive_supportDB import move_support_to_archive, check_archive_support_messages
 
 from bot.env import SUPERUSERS
 router = Router()

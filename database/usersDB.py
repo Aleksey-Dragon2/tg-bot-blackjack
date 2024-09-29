@@ -39,6 +39,23 @@ def add_user(message):
     cursor.close()
     connection.close()
 
+def add_user_id(user_id, username, name):
+    connection = sqlite3.connect('users.db')
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT id FROM users WHERE id = ?", (user_id,))
+    result = cursor.fetchone()
+
+    if result is None:
+        cursor.execute("INSERT INTO users (id, username, name) VALUES (?, ?, ?)",
+                       (user_id, username, name))
+        connection.commit()
+
+    cursor.close()
+    connection.close()
+    
+
+
 
 def delete_user(user_id):
     conn = sqlite3.connect('users.db') 
@@ -132,6 +149,35 @@ def get_user_stats(user_id):
     else:
         return None
     
+def get_rating_users():
+    connection = sqlite3.connect('users.db')
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT name, wins FROM users ORDER BY wins DESC LIMIT 3")
+    top_users = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return top_users
+
+def get_users_rating_by_id(user_id):
+    connection = sqlite3.connect('users.db')
+    cursor = connection.cursor()
+
+    cursor.execute("""
+                    SELECT COUNT(*) + 1 AS position
+                    FROM users
+                    WHERE wins > (SELECT wins FROM users WHERE id = ?)
+                """, 
+                (user_id,))
+
+    position = cursor.fetchone()[0]
+
+    cursor.close()
+    connection.close()
+
+    return position
 
 def clear_user_stats(user_id):
     connection = sqlite3.connect('users.db')

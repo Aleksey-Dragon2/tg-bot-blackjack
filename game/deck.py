@@ -1,5 +1,5 @@
 import random
-import database.users as db
+import database.usersDB as db
 from config.language import GAME_RESULT, WIN_GAME, LOSE_GAME,DRAW_GAME
 
 players=dict()
