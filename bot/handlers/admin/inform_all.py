@@ -5,7 +5,8 @@ from config.language import SEND_MESSAGE_ALL, ADMIN_SEND_ALL_MESSAGE, SEND_MESSA
 from bot.env import SUPERUSERS
 from bot.FSM import AdminState
 from bot.markup import ADMIN_SEND_MESSAGE_ALL_MARKUP
-from database.users import get_users_ids
+from database.usersDB import get_users_ids
+from database.ErrorLogDB import add_error_log
 from bot.client import bot
 router = Router()
 
@@ -34,7 +35,10 @@ async def confirm_send_message_all(callback: CallbackQuery, state: FSMContext):
     text_message=str(data['text_message'])
     await callback.message.edit_text(text=SEND_MESSAGE_ALL_SENT(text_message))
     for user in get_users_ids():
-        await bot.send_message(chat_id=user, text=text_message)
+        try:
+            await bot.send_message(chat_id=user, text=text_message)
+        except Exception as e:
+            add_error_log(str(e), "inform_all", text_message)
     await state.clear()
 
 @router.callback_query(AdminState.AWAITING_CONFIRMATION, lambda c: c.data == "deny_send_message_all")

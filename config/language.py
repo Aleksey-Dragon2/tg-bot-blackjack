@@ -147,6 +147,8 @@ ADMIN_SUPPORT_MENU_CONFIRM=('Спасибо👍', 'Спасибо')
 ADMIN_SUPPORT_MENU_DENY=('Отклонить👎', 'Отклонить')
 ADMIN_SUPPORT_MENU_BACK=('Назад', 'Отмена')
 
+ERRORS=('Ошибки🚨', 'Ошибки')
+
 ##     \ Сообщения администратору /    ##
 ADMIN_PANEL="Добро пожаловать в админ панель."
 
@@ -155,6 +157,13 @@ ADMIN_MESSAGE_PROCESSED='Сообщение обработано'
 
 
 ADMIN_SEND_ALL_MESSAGE='Введите сообщение, которое хотите отправить всем пользователям:'
+
+def ADMIN_ERROR_LOG(errors):
+    error_list=''
+    for error in errors:
+        id, time, error, location_error, last_message = error
+        error_list+=f"ID: {id}, Time:{time}, Error: {error}, Location: {location_error}, Last message: {last_message}\n\n"
+    return f"Список ошибок:\n\n{error_list}"
 
 def check_all_supports(supports):
     if supports:
