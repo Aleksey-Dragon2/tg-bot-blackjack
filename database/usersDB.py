@@ -57,7 +57,7 @@ def add_user_id(user_id, username, name):
 
 
 
-def delete_user(user_id):
+def delete_user_by_id(user_id):
     conn = sqlite3.connect('users.db') 
     cursor = conn.cursor()
 

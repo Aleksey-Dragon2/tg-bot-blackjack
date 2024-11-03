@@ -19,6 +19,21 @@ def create_support_table():
     cursor.close()
     connection.close()
 
+def get_support_user_id(support_id):
+    connection = sqlite3.connect('supports.db')
+    cursor = connection.cursor()
+
+    cursor.execute('''
+                SELECT user_id FROM relevant_support WHERE id=?;
+                ''', (support_id,))
+    support=cursor.fetchall()
+    user_id=support[0][0]
+
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+    return user_id
 
 def add_support_message(user_id, username, name, text):
     connection = sqlite3.connect('supports.db')
@@ -41,11 +56,7 @@ def check_support_messages():
     cursor.execute('''
                 SELECT id, 
                 DATETIME(time, '+3 hours') AS time, 
-                user_id, 
-                username, 
-                name, 
-                text,
-                status
+                text
                 FROM relevant_support;
                 ''')
     supports=cursor.fetchall()
@@ -65,6 +76,7 @@ def get_all_support_message_user(user_id):
                 DATETIME(time, '+3 hours') AS time,
                 name, 
                 text,
+                "В очереди" AS explanation,
                 status
                 FROM relevant_support
                 WHERE user_id=?
@@ -76,6 +88,7 @@ def get_all_support_message_user(user_id):
                 DATETIME(time, '+3 hours') AS time,
                 name, 
                 text,
+                explanation,
                 status
                 FROM archive_support
                 WHERE user_id=?;

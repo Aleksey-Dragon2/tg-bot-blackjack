@@ -11,7 +11,8 @@ def create_archive_support_table():
             username TEXT,
             name TEXT NOT NULL,
             text TEXT,
-            status TEXT DEFAULT 'Active'
+            explanation TEXT DEFAULT 'No',
+            status TEXT DEFAULT 'Closed'
         )
     ''')
 
@@ -39,8 +40,6 @@ def move_support_to_archive(support_id, status):
 
         support_conn.commit()
 
-        print(f"Запись с id {support_id} успешно перемещена в архив.")
-
     except sqlite3.Error as e:
         support_conn.rollback()
         print(f"Ошибка при перемещении записи: {e}")
@@ -60,8 +59,9 @@ def check_archive_support_messages():
                 username, 
                 name, 
                 text,
+                explanation,
                 status
-                FROM archive_support;
+                FROM archive_support
                 ''')
     supports=cursor.fetchall()
 
@@ -82,6 +82,7 @@ def check_archive_support_message_by_id(support_id):
                 username, 
                 name, 
                 text,
+                explanation,
                 status
                 FROM archive_support 
                 WHERE id=?;

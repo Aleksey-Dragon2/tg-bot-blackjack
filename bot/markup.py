@@ -2,7 +2,7 @@ import config.language as lang
 
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 
-
+## Главное меню
 START_MARKUP = ReplyKeyboardMarkup(
     resize_keyboard=True,
     keyboard=[
@@ -14,7 +14,7 @@ START_MARKUP = ReplyKeyboardMarkup(
     ],
 )
 
-
+## Меню игры
 GAME_MARKUP = ReplyKeyboardMarkup(
         resize_keyboard=True,
         keyboard=[
@@ -22,6 +22,7 @@ GAME_MARKUP = ReplyKeyboardMarkup(
         ],
     )
 
+## Меню перезапуска игры
 RESTART_MARKUP = ReplyKeyboardMarkup(
     resize_keyboard=True,
     keyboard=[
@@ -30,7 +31,7 @@ RESTART_MARKUP = ReplyKeyboardMarkup(
     ],
 )
 
-
+## Меню поддержки для пользователя
 SUPPORT_MARKUP = ReplyKeyboardMarkup(
     resize_keyboard=True,
     keyboard=[
@@ -39,16 +40,19 @@ SUPPORT_MARKUP = ReplyKeyboardMarkup(
     ],
 )
 
+## Меню статистики
 STATS_MARKUP = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text=lang.STATS[0], callback_data="stats")]
     ],
 )
 
+## Меню рейтинга
 RATING_MARKUP = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text=lang.RATING[0], callback_data="rating")]
     ])
-    
+
+## Меню подтверждения поддержки пользователя
 CONFIRM_SUPPORT_MARKUP = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text=lang.CONFIRM_SUPPORT_MESSAGE[0], callback_data="confirm_support"),
@@ -56,7 +60,7 @@ CONFIRM_SUPPORT_MARKUP = InlineKeyboardMarkup(
     ],
 )
 
-
+## Меню администратора
 ADMIN_MARKUP = ReplyKeyboardMarkup(
     resize_keyboard=True,
     keyboard=[
@@ -65,6 +69,7 @@ ADMIN_MARKUP = ReplyKeyboardMarkup(
     ],
 )
 
+## Меню выбора списка поддержки администратора
 ADMIN_SUPPORT_LIST_MARKUP = ReplyKeyboardMarkup(
     resize_keyboard=True,
     keyboard=[
@@ -73,6 +78,14 @@ ADMIN_SUPPORT_LIST_MARKUP = ReplyKeyboardMarkup(
     ],
 )
 
+## Меню сброса ошибок
+ERROR_RESET_MARKUP = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text=lang.ERROR_RESET[0], callback_data="error_reset")],
+    ],
+)
+
+## Меню списка сообщений поддержки администратора
 def ADMIN_SUPPORT_MESSAGES_MARKUPS(ids):
     action='help'
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
@@ -80,6 +93,7 @@ def ADMIN_SUPPORT_MESSAGES_MARKUPS(ids):
     ])
     return keyboard
 
+## Меню сообщений обработки предложения поддержки администратора
 def ADMIN_SUPPORT_MENU_MARKUP(support_id):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text=lang.ADMIN_SUPPORT_MENU_CONFIRM[0], callback_data=f"admin_support_confirm_{support_id}"),
@@ -90,6 +104,7 @@ def ADMIN_SUPPORT_MENU_MARKUP(support_id):
 )
     return keyboard
 
+## Меню подтверждения отправки сообщения всем пользователям
 ADMIN_SEND_MESSAGE_ALL_MARKUP = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text=lang.CONFIRM_SEND_MESSAGE_ALL[0], callback_data="confirm_send_message_all"),
@@ -97,6 +112,7 @@ ADMIN_SEND_MESSAGE_ALL_MARKUP = InlineKeyboardMarkup(
     ],
 )
 
+## Меню списка сообщений поддержки пользователя
 def PAGINATION_MARKUP(page, total_pages):
     buttons = []
     if page > 0:
@@ -105,3 +121,5 @@ def PAGINATION_MARKUP(page, total_pages):
         buttons.append(InlineKeyboardButton(text="Вперед", callback_data=f"page_{page + 1}"))
     
     return InlineKeyboardMarkup(inline_keyboard=[buttons])
+
+

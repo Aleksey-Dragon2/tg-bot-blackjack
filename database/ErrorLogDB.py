@@ -41,3 +41,13 @@ def get_error_log():
     connection.close()
 
     return error_log
+
+def clear_error_log():
+    connection = sqlite3.connect('error_log.db')
+    cursor = connection.cursor()
+
+    cursor.execute('DELETE FROM error_log')
+
+    connection.commit()
+    cursor.close()
+    connection.close()

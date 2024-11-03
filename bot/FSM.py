@@ -12,3 +12,7 @@ class GameState(StatesGroup):
 class AdminState(StatesGroup):
     SENDING_MESSAGE_ALL = State()
     AWAITING_CONFIRMATION = State()
+
+class AdminSupportState(StatesGroup):
+    SUPPORT_MESSAGE = State()
+    CONFIRM_SUPPORT_MESSAGE = State()

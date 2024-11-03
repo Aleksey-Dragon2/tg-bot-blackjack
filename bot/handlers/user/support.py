@@ -7,7 +7,7 @@ from config.language import SUPPORT_INVALID_MOVE, SUPPORT_BACK, USER_SUPPORT_MES
 from bot.markup import SUPPORT_MARKUP, CONFIRM_SUPPORT_MARKUP, PAGINATION_MARKUP
 from bot.FSM import GameState
 from database.supportsDB import add_support_message, get_all_support_message_user
-from bot.handlers.start import start
+from bot.handlers.user.start import start
 import asyncio
 
 router = Router()
@@ -43,7 +43,7 @@ async def process_user_support_messages(message: Message, state: FSMContext):
         user_id = message.from_user.id
     
     supports = get_all_support_message_user(user_id)
-    total_pages = (len(supports)) // 5  # supports+4
+    total_pages = (len(supports)+4) // 5  # supports+4
     await state.update_data(page=0, supports=supports)
     
     await message.answer(
@@ -96,7 +96,7 @@ async def paginate_support_messages(callback: CallbackQuery, state: FSMContext):
     page = int(callback.data.split("_")[1])
     data = await state.get_data()
     supports = data['supports']
-    total_pages = (len(supports)) // 5  # Calculate total pages
+    total_pages = (len(supports)+4) // 5  # Calculate total pages
     
     await callback.message.edit_text(
         SEND_USER_SUPPORT_MESSAGES(supports, page=page),

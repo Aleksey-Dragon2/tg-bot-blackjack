@@ -15,6 +15,7 @@ create_user_table()
 create_support_table()
 create_archive_support_table()
 create_error_log_table()
+
 for router in routers:
     dp.include_router(router)
 dp.message.middleware.register(UserCheckMiddleware())

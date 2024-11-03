@@ -16,9 +16,9 @@ from aiogram.fsm.context import FSMContext
 
 START_GAME='Начать игру🎮'
 
-MAIN=('Главная📄', 'Главная')
-RULES=('Правила🎟', 'Правила')
-STATS=('Статистика📊', 'Статистика')
+MAIN=('Главная📄', 'Главная', 'start')
+RULES=('Правила🎟', 'Правила', 'rules')
+STATS=('Статистика📊', 'Статистика', 'stats')
 SUPPORT=('Поддержка❓', 'Поддержка')
 
 GET_CARD=('Взять карту🃏', 'Взять карту')
@@ -107,8 +107,8 @@ def SEND_USER_SUPPORT_MESSAGES(supports, page=0, page_size=5):
     name = supports[0][2] #get name
     support_list = ''
     for support in paginated_supports:
-        id, time, name, text, status = support
-        support_list += f"ID: {id}, Время:{time}, Текст: {text}, Статус: {status}\n"
+        id, time, name, text, explanation, status = support
+        support_list += f"ID: {id}, Время:{time}, Текст: {text}, Объяснение: {explanation}, Статус: {status}\n"
     
     total_pages = (len(supports) + page_size - 1) // page_size
     return f"{name}, ваши сообщения (страница {page + 1}/{total_pages}):\n\n{support_list}"
@@ -132,7 +132,7 @@ def GAME_RESULT(user_cards, dealer_cards, user_score, dealer_score):
     return game_info
 
 ##     \ Кнопки+логика администратора /    ##
-SUPERUSER=('admin', 'админ', '/admin')
+SUPERUSER=('admin', 'админ', '/admin', 'adm', 'адм')
 ALL_USERS='Все пользователи'
 
 ADMIN_SUPPORT_LIST='Список предложений'
@@ -148,6 +148,7 @@ ADMIN_SUPPORT_MENU_DENY=('Отклонить👎', 'Отклонить')
 ADMIN_SUPPORT_MENU_BACK=('Назад', 'Отмена')
 
 ERRORS=('Ошибки🚨', 'Ошибки')
+ERROR_RESET=('Очистить🧹', 'Очистить')
 
 ##     \ Сообщения администратору /    ##
 ADMIN_PANEL="Добро пожаловать в админ панель."
@@ -159,19 +160,32 @@ ADMIN_MESSAGE_PROCESSED='Сообщение обработано'
 ADMIN_SEND_ALL_MESSAGE='Введите сообщение, которое хотите отправить всем пользователям:'
 
 def ADMIN_ERROR_LOG(errors):
-    error_list=''
-    for error in errors:
-        id, time, error, location_error, last_message = error
-        error_list+=f"ID: {id}, Time:{time}, Error: {error}, Location: {location_error}, Last message: {last_message}\n\n"
-    return f"Список ошибок:\n\n{error_list}"
+    if errors:
+        error_list=''
+        for error in errors:
+            id, time, error, location_error, last_message = error
+            error_list+=f"ID: {id}, Time:{time}, Error: {error}, Location: {location_error}, Last message: {last_message}\n\n"
+        return f"Список ошибок:\n\n{error_list}"
+    else:
+        return "Нет ошибок"
 
 def check_all_supports(supports):
     if supports:
         support_list=''
         for support in supports:
-            id, time, user_id, username, name, text, status = support
-            support_list+=f"ID: {id}, Time:{time}, User_id: {user_id}, Username: {username}, Name: {name}, Text: {text}, Status: {status}\n"
+            id, time, text = support
+            support_list+=f"<b>ID</b>: {id} | <b>Time</b>: {time} | <b>Text</b>: {text}\n\n"
         return f"Список предложений:\n{support_list}"
+    else:
+        return "Нет предложений"
+
+def check_all_supports_archive(supports):
+    if supports:
+        support_list=''
+        for support in supports:
+            id, time, user_id, username, name, text, explanation, status = support
+            support_list+=f"ID: {id}, Time:{time}, User_id: {user_id}, Username: {username}, Name: {name}, Text: {text}, Explanation: {explanation}, Status: {status}\n"
+        return f"Список предложений в архиве:\n{support_list}"
     else:
         return "Нет предложений"
 

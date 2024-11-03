@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from bot.markup import GAME_MARKUP
 from game.deck import add_cards
 from config.language import GAME_INFO, GET_CARD, STOP, GAME_INVALID_MOVE
-from bot.handlers.end_game import end_game
+from bot.handlers.user.end_game import end_game
 
 router = Router()
 

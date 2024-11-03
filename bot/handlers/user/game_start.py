@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from config.language import START_GAME, RESTART
 from bot.FSM import GameState
 from game.deck import get_deck, add_cards
-from bot.handlers.move_player import player_turn
+from bot.handlers.user.move_player import player_turn
 router = Router()
 
 
